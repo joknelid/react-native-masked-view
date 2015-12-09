@@ -19,7 +19,7 @@ RCT_EXPORT_MODULE();
 
 - (UIView *)view
 {
-    return [[RNMaskedView alloc] init];
+  return [[RNMaskedView alloc] initWithBridge:self.bridge];
 }
 
 - (dispatch_queue_t)methodQueue
@@ -27,7 +27,7 @@ RCT_EXPORT_MODULE();
     return dispatch_get_main_queue();
 }
 
-RCT_EXPORT_VIEW_PROPERTY(maskImage, NSString);
+RCT_EXPORT_VIEW_PROPERTY(maskImage, NSDictionary);
 
 
 @end

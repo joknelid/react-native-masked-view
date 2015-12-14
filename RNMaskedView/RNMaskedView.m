@@ -16,25 +16,33 @@
 @implementation RNMaskedView {
   UIImage *_maskUIImage;
   RCTBridge *_bridge;
+  CALayer *_mask;
 }
 
 - (instancetype)initWithBridge:(RCTBridge *)bridge
 {
   if ((self = [super init])) {
     _bridge = bridge;
+    _maskUIImage = nil;
+    _mask = nil;
   }
   return self;
 }
 
 - (void)layoutSubviews
 {
-    [super layoutSubviews];
-    
-    CALayer *mask = [CALayer layer];
-    mask.contents = (id)[_maskUIImage CGImage];
-    mask.frame = self.bounds; //TODO custom: CGRectMake(left, top, width, height);
-    self.layer.mask = mask;
+  [super layoutSubviews];
+
+  if (_maskUIImage != nil) {
+    if (_mask == nil) {
+      _mask = [CALayer layer];
+    }
+    _mask.contents = (id)[_maskUIImage CGImage];
+    _mask.frame = self.bounds; //TODO custom: CGRectMake(left, top, width, height););
+    self.layer.mask = _mask;
     self.layer.masksToBounds = YES;
+  }
+
 }
 
 - (void)setMaskImage:(NSDictionary *)source
@@ -52,11 +60,10 @@
                             progressBlock:nil
                           completionBlock:^(NSError *error, UIImage *image) {
 
-                            dispatch_async(_bridge.uiManager.methodQueue, ^{
+                            dispatch_async(dispatch_get_main_queue(), ^{
                               RNMaskedView *strongSelf = weakSelf;
                               strongSelf->_maskUIImage = image;
                               [strongSelf setNeedsLayout];
-                              [strongSelf setNeedsDisplay];
                             });
                           }];
   }

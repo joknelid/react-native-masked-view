@@ -32,6 +32,7 @@ import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.uimanager.PixelUtil;
 import com.facebook.react.uimanager.UIManagerModule;
 import com.facebook.react.uimanager.events.EventDispatcher;
+import com.facebook.react.views.view.ReactViewGroup;
 
 /*package*/ class RNMaskedView extends ReactViewGroup {
 
@@ -40,7 +41,7 @@ import com.facebook.react.uimanager.events.EventDispatcher;
     }
 
     public void loadMask(String baseUrl) {
-        this.baseUrl = baseUrl;
+        Log.e("JENS", "Load mask: " + baseUrl);
     }
 
 }

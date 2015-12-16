@@ -2,20 +2,12 @@ package com.rnmaskedview;
 
 import javax.annotation.Nullable;
 
-import android.webkit.WebChromeClient;
-import android.webkit.CookieManager;
-
-import com.facebook.react.bridge.JSApplicationIllegalArgumentException;
-import com.facebook.react.bridge.ReadableArray;
-import com.facebook.react.common.MapBuilder;
 import com.facebook.react.uimanager.ViewGroupManager;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.ReactProp;
 import com.facebook.react.common.annotations.VisibleForTesting;
 
-import java.util.Map;
-
-public class RNMaskedViewManager extends ViewGroupManager<RNWebView> {
+public class RNMaskedViewManager extends ViewGroupManager<RNMaskedView> {
 
     @VisibleForTesting
     public static final String REACT_CLASS = "RNMaskedViewAndroid";
@@ -32,7 +24,7 @@ public class RNMaskedViewManager extends ViewGroupManager<RNWebView> {
     }
 
     @ReactProp(name = "maskImage")
-    public void setUrl(RNWebView view, @Nullable String image) {
+    public void setMask(RNMaskedView view, @Nullable String image) {
         view.loadMask(image);
     }
 

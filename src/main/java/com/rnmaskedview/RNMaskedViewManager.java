@@ -10,7 +10,7 @@ import com.facebook.react.common.annotations.VisibleForTesting;
 public class RNMaskedViewManager extends ViewGroupManager<RNMaskedView> {
 
     @VisibleForTesting
-    public static final String REACT_CLASS = "RNMaskedViewAndroid";
+    public static final String REACT_CLASS = "RNMaskedView";
 
     @Override
     public String getName() {

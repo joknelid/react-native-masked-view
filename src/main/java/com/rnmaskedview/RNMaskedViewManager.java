@@ -2,6 +2,7 @@ package com.rnmaskedview;
 
 import javax.annotation.Nullable;
 
+import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.uimanager.ViewGroupManager;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.ReactProp;
@@ -24,8 +25,8 @@ public class RNMaskedViewManager extends ViewGroupManager<RNMaskedView> {
     }
 
     @ReactProp(name = "maskImage")
-    public void setMask(RNMaskedView view, @Nullable String image) {
-        view.loadMask(image);
+    public void setMaskImage(RNMaskedView view, @Nullable ReadableMap source) {
+        view.loadMask(source);
     }
 
 }

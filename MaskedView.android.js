@@ -34,13 +34,13 @@ var MaskedView = React.createClass({
     return (
       <NativeMaskedView
         {...this.props}
-        maskImage={imgSource}
+        maskImage={imgSource.uri}
       />
     );
   },
 
 });
 
-var NativeMaskedView = requireNativeComponent('RNMaskedView', MaskedView);
+var NativeMaskedView = requireNativeComponent('RNMaskedView', null);
 
 module.exports = MaskedView;

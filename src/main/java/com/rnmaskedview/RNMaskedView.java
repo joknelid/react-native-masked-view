@@ -1,6 +1,12 @@
 package com.rnmaskedview;
 
 import android.content.res.Resources;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -54,10 +60,23 @@ import com.facebook.react.views.view.ReactViewGroup;
 /*package*/ class RNMaskedView extends ReactViewGroup implements DataSubscriber<CloseableReference<CloseableImage>> {
 
     private Resources mResources;
+    private Drawable mMaskImage = null;
+    private Bitmap mMaskBitmap = null;
+    private Paint mPaint;
+    private int mOldWidth = -1, mOldHeight = -1;
+    private PorterDuffXfermode mDuffMode;
 
     public RNMaskedView(ReactContext reactContext) {
         super(reactContext);
+
         mResources = reactContext.getResources();
+
+        if (Build.VERSION.SDK_INT >= 11) {
+            setLayerType(LAYER_TYPE_SOFTWARE, null); //Only works for software layers
+        }
+
+        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mDuffMode = new PorterDuffXfermode(PorterDuff.Mode.DST_IN);
     }
 
     public void loadMask(ReadableMap source) {
@@ -86,6 +105,39 @@ import com.facebook.react.views.view.ReactViewGroup;
         }
     }
 
+    //Drawing
+    @Override
+    protected void dispatchDraw(Canvas canvas) {
+        super.dispatchDraw(canvas);
+
+        if (mMaskImage != null) {
+            if (getMeasuredWidth() > 0 && getMeasuredHeight() > 0) {
+                maybeReloadBitmapMask();
+
+            mPaint.setXfermode(mDuffMode);
+                canvas.drawBitmap(mMaskBitmap, 0.0f, 0.0f, mPaint);
+            mPaint.setXfermode(null);
+            }
+        }
+    }
+
+    private void maybeReloadBitmapMask() {
+        if (getMeasuredWidth() != mOldWidth || getMeasuredHeight() != mOldHeight) {
+
+            if (mMaskBitmap != null && !mMaskBitmap.isRecycled()) {
+                mMaskBitmap.recycle();
+            }
+
+            mMaskBitmap = Bitmap.createBitmap(getMeasuredWidth(), getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(mMaskBitmap);
+            mMaskImage.setBounds(0, 0, getMeasuredWidth(), getMeasuredHeight());
+            mMaskImage.draw(canvas);
+
+            mOldWidth = getMeasuredWidth();
+            mOldHeight = getMeasuredHeight();
+        }
+    }
+
     public void onNewResult(DataSource<CloseableReference<CloseableImage>> dataSource) {
         Log.e("RNMaskedView", "Image loaded?");
 
@@ -93,7 +145,7 @@ import com.facebook.react.views.view.ReactViewGroup;
             Log.e("RNMaskedView", "Image loaded!!!!");
 
             CloseableReference<CloseableImage> imageRef = dataSource.getResult();
-            Drawable image = createDrawable(imageRef);
+            mMaskImage = createDrawable(imageRef);
         }
     }
 

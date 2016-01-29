@@ -57,6 +57,8 @@ import com.facebook.react.uimanager.UIManagerModule;
 import com.facebook.react.uimanager.events.EventDispatcher;
 import com.facebook.react.views.view.ReactViewGroup;
 
+import javax.annotation.Nullable;
+
 /*package*/ class RNMaskedView extends ReactViewGroup implements DataSubscriber<CloseableReference<CloseableImage>> {
 
     private Resources mResources;
@@ -79,6 +81,26 @@ import com.facebook.react.views.view.ReactViewGroup;
         mDuffMode = new PorterDuffXfermode(PorterDuff.Mode.DST_IN);
     }
 
+    // Stolen from ReactImageView
+    private static int getResourceDrawableId(Context context, @Nullable String name) {
+        if (name == null || name.isEmpty()) {
+            return 0;
+        }
+        return context.getResources().getIdentifier(
+                name.toLowerCase().replace("-", "_"),
+                "drawable",
+                context.getPackageName());
+    }
+
+    // Stolen from ReactImageView
+    private static @Nullable Uri getResourceDrawableUri(Context context, @Nullable String name) {
+        int resId = getResourceDrawableId(context, name);
+        return resId > 0 ? new Uri.Builder()
+                .scheme(UriUtil.LOCAL_RESOURCE_SCHEME)
+                .path(String.valueOf(resId))
+                .build() : null;
+    }
+
     public void loadMask(ReadableMap source) {
         if (source.hasKey("uri")) {
             String uriString = source.getString("uri");
@@ -89,6 +111,12 @@ import com.facebook.react.views.view.ReactViewGroup;
             }
 
             Uri uri = Uri.parse(uriString);
+            // Verify scheme is set, so that relative uri (used by static resources) are not handled.
+            if (uri.getScheme() == null) {
+                uri = getResourceDrawableUri(getContext(), uriString);
+            }
+
+            Log.e("RNMaskedView", "Loading image: " + uriString);
 
             ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(uri)
 //                    .setPostprocessor(postprocessor)

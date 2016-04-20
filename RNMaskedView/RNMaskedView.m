@@ -47,11 +47,15 @@
 
 - (void)setMaskImage:(NSDictionary *)source
 {
+  NSLog(@"MaskedView - setMaskedImage source: %@", source);
+    
   if (![source isEqual:_maskImage]) {
     _maskImage = [source copy];
     NSString *imageTag = [RCTConvert NSString:_maskImage[@"uri"]];
     CGFloat scale = [RCTConvert CGFloat:_maskImage[@"scale"]] ?: 1;
     
+    NSLog(@"MaskedView - setMaskedImage loading image tag:%@ scale: %d", imageTag, scale);
+      
     __weak RNMaskedView *weakSelf = self;
     [_bridge.imageLoader loadImageWithTag:imageTag
                                      size:CGSizeZero
@@ -61,9 +65,13 @@
                           completionBlock:^(NSError *error, UIImage *image) {
 
                             dispatch_async(dispatch_get_main_queue(), ^{
-                              RNMaskedView *strongSelf = weakSelf;
-                              strongSelf->_maskUIImage = image;
-                              [strongSelf setNeedsLayout];
+                              NSLog(@"MaskedView - async block start, weakSelf: %p", weakSelf);
+                              if (weakSelf) {
+                                RNMaskedView *strongSelf = weakSelf;
+                                strongSelf->_maskUIImage = image;
+                                [strongSelf setNeedsLayout];
+                              }
+                              NSLog(@"MaskedView - async block end");
                             });
                           }];
   }

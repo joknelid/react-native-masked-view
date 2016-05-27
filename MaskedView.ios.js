@@ -5,12 +5,15 @@
 
 'use strict';
 
-var React = require('react-native');
+var React = require('react');
+var {
+  PropTypes
+} = React;
+var ReactNative = require('react-native');
 var {
   requireNativeComponent,
-  PropTypes,
-  View,
-} = React;
+  View
+} = ReactNative;
 
 var resolveAssetSource = require('../react-native/Libraries/Image/resolveAssetSource');
 

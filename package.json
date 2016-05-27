@@ -2,7 +2,7 @@
   "name": "react-native-masked-view",
   "version": "0.1.0",
   "description": "A <MaskedView> element for react-native",
-  "main": "MaskedView.js",
+  "main": "index.js",
   "author": {
     "name": "Gil Birman",
 	"email": "birmangil@gmail.com",
